@@ -6,7 +6,7 @@ License: LGPLv2
 Group: System Environment/Tools
 URL: http://github.com/nemomobile/statefs-contextkit
 Source0: %{name}-%{version}.tar.bz2
-BuildRequires: pkgconfig(statefs) >= 0.3.6
+BuildRequires: pkgconfig(statefs) >= 0.3.10
 BuildRequires: cmake >= 2.8
 BuildRequires: pkgconfig(cor) >= 0.1.5
 BuildRequires: pkgconfig(QtCore)
@@ -82,9 +82,9 @@ rm -rf %{buildroot}
 
 %files provider
 %defattr(-,root,root,-)
-%{_libdir}/statefs/libprovider-contextkit.so
+%{_statefs_libdir}/libprovider-contextkit.so
 %{_bindir}/statefs-contextkit-register
-%{_sharedstatedir}/statefs/hooks/prestart-contextkit-register
+%{_statefs_sharedhooksdir}/prestart-contextkit-register
 
 %files subscriber-qt4
 %defattr(-,root,root,-)
@@ -94,5 +94,8 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/contextkit-statefs-qt4.pc
 
-%post provider
-statefs register --statefs-type=qt4  %{_libdir}/statefs/libprovider-contextkit.so || :
+%posttrans provider
+%statefs_register qt4 %{_statefs_libdir}/libprovider-contextkit.so || :
+
+%postun provider
+%statefs_cleanup || :
